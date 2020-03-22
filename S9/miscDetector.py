@@ -1,8 +1,8 @@
-#Let's visualize the images
 import torch
 import matplotlib.pyplot as plt
+import numpy as np
 
-def miscImages(model, device, test_loader):
+def miscImages(model, device, test_loader, classes):
     model.eval()
     test_loss = 0
     incorrect = 0
@@ -16,6 +16,15 @@ def miscImages(model, device, test_loader):
               if pred[i].item() != target[i]:
                 incorrect += 1
                 print('\n\n{} [ Predicted Value: {}, Actual Value: {} ]'.format(
-                incorrect, pred[i].item(), target[i], ))
-                plt.imshow(data[i].cpu().numpy().squeeze(), cmap='gray_r')
+                incorrect, classes[pred[i].item()], classes[target[i]], ))
+                print(data[i].cpu().numpy().shape)
+                #dataa = np.rollaxis(data[i].cpu().numpy(),0,3)
+                #
+                dataa = data[i].cpu()
+                img = np.transpose(dataa, (1, 2, 0))
+                print(img.shape)
+                # img[0] = 
+                # img[1] =
+                # img[2] = 
+                plt.imshow(img/2 + 0.5)
                 plt.show()
