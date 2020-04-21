@@ -13,7 +13,7 @@ import torch.optim as optim
 from PIL import Image
 #import matplotlib.pyplot as plt
 import numpy as np
-from albumentations import Compose, RandomCrop, Normalize, HorizontalFlip, Resize, PadIfNeeded, Cutout, VerticalFlip, Rotate, Flip
+from albumentations import Compose, RandomCrop, Normalize, HorizontalFlip, Resize, PadIfNeeded, Cutout, ShiftScaleRotate, Rotate, Flip, HueSaturationValue
 from albumentations.pytorch import ToTensor
 import albumentations as alb
 
@@ -39,15 +39,14 @@ class AlbumentationPILImageDataset(Dataset):
         return img, label
         
 g_alb_pil_transform_train = Compose([
-    #Resize(32,32, always_apply=True),
-    PadIfNeeded(8,8),
+    PadIfNeeded(80,80),
     RandomCrop(64,64 ),
     HorizontalFlip(),
-    #VerticalFlip(),
-    #Flip(-1),
-    Rotate((-20,20)),
+    HueSaturationValue(hue_shift_limit=4, sat_shift_limit=13, val_shift_limit=9),
+    Rotate((-60,60)),
     Cutout(max_h_size=20, max_w_size=20),
-    Normalize((0.4802, 0.4481, 0.3975), (0.2302, 0.2265, 0.2262)), # imagenet value
+    Normalize((0.48043722, 0.44820285, 0.39760238), (0.27698976, 0.26908714, 0.2821603)), # imagenet value
+    ShiftScaleRotate(shift_limit=0.05, scale_limit=0.2,rotate_limit=13, p=0.6),
     ToTensor()
 ])
 
@@ -56,7 +55,7 @@ g_alb_pil_transform_test = Compose([
     #std = [0.229, 0.224, 0.225]
     #mean = [0.485, 0.456, 0.406]
     #Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)), # cifar values
-    Normalize((0.4802, 0.4481, 0.3975), (0.2302, 0.2265, 0.2262)), # imagenet value
+    Normalize((0.48043722, 0.44820285, 0.39760238), (0.27698976, 0.26908714, 0.2821603)), # imagenet value
     ToTensor()
 ])
 
